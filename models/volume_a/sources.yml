@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: EBUSER
+    schema: EBUSER
+    tables:
+      - name: survey_feedbacks
+      - name: survey_feedback_answers
+      - name: answers
+      - name: questions
+      - name: country_dim
+      - name: feedback_weights

@@ -1,0 +1,329 @@
+
+version: 2
+
+models:
+  - name: feedback_countries
+    description: "List of all the interviews of a survey with the iso country code where the interview was conducted"
+    columns:
+      - name: survey_id
+        description: "The survey ID"
+      - name: survey_feedback_id
+        description: "Feedback/Interview ID"
+      - name: iso_code
+        description: "The ISO country code"
+
+  - name: answer_weights
+    description: "Country and EU weights, by feedback and answer, to calculate the totals per answer and country, and per EU aggregates"
+    columns:
+      - name: survey_id
+        description: "The survey ID"
+      - name: survey_feedback_id
+        description: "Feedback/Interview ID"
+      - name: question_id
+        description: "Code which identifies the question"
+      - name: country
+        description: "ISO country code where the interview was conducted"
+      - name: answer_code
+        description: "Number which identifies the answer given to the related question"
+      - name: answer_label
+        description: "Description of the answer given to the related question"
+      - name: country_weight
+        description: "Weight given to the feedback's answers in relation to the survey"
+      - name: eu_weight
+        description: "Special weight for the calculation of the EU aggregates"
+      - name: de_weight
+        description: "Special weight for the calculation of the aggregate DE (D-E + D-W)"
+      - name: question_type_id
+        description: "ID to know the type of the question (simple-choice, multi-choice, ...)"
+
+  - name: answer_weights_no_multichoice
+    description: "Country and EU weights, by feedback and answer, to calculate the totals per answer and country, and per EU aggregates. 
+                  Only non multi-choice questions."
+    columns:
+      - name: survey_id
+        description: "The survey ID"
+      - name: survey_feedback_id
+        description: "Feedback/Interview ID"
+      - name: question_id
+        description: "Code which identifies the question"
+      - name: country
+        description: "ISO country code where the interview was conducted"
+      - name: answer_code
+        description: "Number which identifies the answer given to the related question"
+      - name: answer_label
+        description: "Description of the answer given to the related question"
+      - name: country_weight
+        description: "Weight given to the feedback's answers in relation to the survey"
+      - name: eu_weight
+        description: "Special weight for the calculation of the EU aggregates"
+      - name: de_weight
+        description: "Special weight for the calculation of the aggregate DE (D-E + D-W)"
+      - name: question_type_id
+        description: "ID to know the type of the question (simple-choice, multi-choice, ...)"
+
+  - name: count_per_answer_no_multi
+    description: "Total records per possible answer, per question and country. Both the actual counting and the weighted counting are included. 
+                  The EU, DE and UK aggregates ar calculated in this table."
+    columns:
+      - name: survey_id
+        description: "The survey ID"
+      - name: question_id
+        description: "Code which identifies the question"
+      - name: country
+        description: "ISO country code (including EU) where the interview was conducted"
+      - name: answer_code
+        description: "Number which identifies the answer given to the related question"
+      - name: answer_label
+        description: "Description of the answer given to the related question"
+      - name: num_answers
+        description: "Actual number of records per possible answer"
+      - name: weighted_num_answers
+        description: "Weighted number of records per possible answer"
+
+  - name: totals_per_question_no_multi
+    description: "Total records per possible answer, per question and country. 
+                  Both the actual counting and the weighted counting are included. The EU, DE and UK aggregates are calculated in this table. 
+                  The table contains only not multi_choice questions."
+    columns:
+      - name: survey_id
+        description: "The survey ID"
+      - name: question_id
+        description: "Code which identifies the question"
+      - name: country
+        description: "ISO country code where the interviews were conducted"
+      - name: total_answers
+        description: "Actual number of records per question"
+      - name: total_weighted_answers
+        description: "Weighted number of records per question"
+
+  - name: stats_by_answer
+    description: "Table with the totals per answer, weighted totals per possible answer, and the percentage for each possible answer"
+    columns:
+      - name: survey_id
+        description: "The survey ID"
+      - name: question_id
+        description: "Code which identifies the question"
+      - name: country
+        description: "ISO country code (including EU) where the interview was conducted"
+      - name: answer_code
+        description: "Number which identifies the answer given to the related question"
+      - name: answer_label
+        description: "Description of the answer given to the related question"
+      - name: rounded_pct
+        description: "Rounded (down) percentage of records for each possible answer"
+      - name: decimals
+        description: "Decimal part of the percentage for each possible answer, needed for the special rounding on the percentages"
+      - name: total_answers
+        description: "Actual number of records per question"
+      - name: weighted_num_answers
+        description: "Weighted number of records per possible answer"
+
+  - name: answers_ordered_by_decimals
+    description: "Contains the percentages of each possible answer by survey, question and country. There are 4 metrics in this table:
+                  The down rounded percentage by possible answer.\n
+                  The decimal part of the percentage.
+                  The difference up to 100% of the sum of the down rounded percentages.
+                  The position of the percentage ordered descendingly by the decimal part."
+    columns:
+      - name: survey_id
+        description: "The survey ID"
+      - name: question_id
+        description: "Code which identifies the question"
+      - name: country
+        description: "ISO country code (including EU) where the interview was conducted"
+      - name: answer_code
+        description: "Number which identifies the answer given to the related question"
+      - name: answer_label
+        description: "Description of the answer given to the related question"
+      - name: rounded_pct
+        description: "Rounded (down) percentage of records for each possible answer"
+      - name: decimals
+        description: "Decimal part of the percentage for each possible answer, needed for the special rounding on the percentages"
+      - name: dif_to_100
+        description: "Difference between 100 and the sum of the percentages without decimals. 
+                      Needed to know how many units have to be distributed to the already calculated percentages until getting 100%."
+      - name: position_by_decimals
+        description: "Position of the possible answer ordered by the decimal value of the percentage of records. 
+                      The first N answers (where N is the difference between 100 and the sum of the percentages without decimals) get an extra unit."
+
+  - name: rounded_pct_by_answer
+    description: "Special rounded percentage of each possible answer per question and country. 
+                  The special rounding is applied: 
+                  Sum of percentages without decimals, and distribution of extra units to the N percentages with higher decimal value until getting 100%."
+    columns:
+      - name: survey_id
+        description: "The survey ID"
+      - name: question_id
+        description: "Code which identifies the question"
+      - name: country
+        description: "ISO country code (including EU) where the interview was conducted"
+      - name: answer_code
+        description: "Number which identifies the answer given to the related question"
+      - name: answer_label
+        description: "Description of the answer given to the related question"
+      - name: rounded_pct
+        description: "Rounded percentage of each possible answer per question and country. The special rounding is applied."
+
+  - name: rounded_data
+    description: "Data for the calculated Volume A, without grouping the '_rgps' answers with the rest of the answers of one question.
+                  The '_rgps' answers are groups of possible answers into new categories"
+    columns:
+      - name: survey_id
+        description: "The survey ID"
+      - name: question_id
+        description: "Code which identifies the question"
+      - name: country
+        description: "ISO country code (including EU) where the interview was conducted"
+      - name: answer_code
+        description: "Number which identifies the answer given to the related question"
+      - name: answer_label
+        description: "Description of the answer given to the related question"
+      - name: weighted_num_answers
+        description: "Rounded weighted number of records per possible answer"
+      - name: rounded_pct
+        description: "Rounded percentage of each possible answer per question and country. The special rounding is applied."
+
+  - name: rgps_grouped_answers_data
+    description: "Data for the calculated Volume A, grouping the '_rgps' answers with the rest of the answers of the question.
+                  The '_rgps' answers are groups of possible answers into new categories"
+    columns:
+      - name: survey_id
+        description: "The survey ID"
+      - name: question_id
+        description: "Code which identifies the question. The '_rgps' questions are mapped to the question_id without the '_rgps' sufix."
+      - name: country
+        description: "ISO country code (including EU) where the interview was conducted"
+      - name: answer_code
+        description: "Number which identifies the answer given to the related question"
+      - name: answer_label
+        description: "Description of the answer given to the related question. 
+                      It only contains the '_rgps' answer descriptions that are not repeated for the related question without '_rgps'."
+      - name: weighted_num_answers
+        description: "Weighted number of records per possible answer"
+      - name: rounded_pct
+        description: "Rounded percentage of each possible answer per question and country. The special rounding is applied."
+
+  - name: answer_weights_multichoice
+    description: "Country and EU weights, by feedback and answer, to calculate the totals per answer and country, and per EU aggregates. 
+                  Only multi-choice questions, as the calculation for these is different that for the other questions."
+    columns:
+      - name: survey_id
+        description: "The survey ID"
+      - name: survey_feedback_id
+        description: "Feedback/Interview ID"
+      - name: question_id
+        description: "Code which identifies the question"
+      - name: country
+        description: "ISO country code where the interview was conducted"
+      - name: answer_code
+        description: "Number which identifies the answer given to the related question"
+      - name: answer_label
+        description: "Description of the answer given to the related question"
+      - name: country_weight
+        description: "Weight given to the feedback's answers in relation to the survey"
+      - name: eu_weight
+        description: "Special weight for the calculation of the EU aggregates"
+      - name: de_weight
+        description: "Special weight for the calculation of the aggregate DE (D-E + D-W)"
+      - name: question_type_id
+        description: "ID to know the type of the question (simple-choice, multi-choice, ...)"
+
+  - name: count_per_answer_multichoice
+    description: "Total records per possible answer, per question and country. Both the actual counting and the weighted counting are included. 
+                  The EU, DE and UK aggregates ar calculated in this table. Only multi_choice questions."
+    columns:
+      - name: survey_id
+        description: "The survey ID"
+      - name: question_id
+        description: "Code which identifies the question. Only multi_choice questions."
+      - name: country
+        description: "ISO country code (including EU) where the interview was conducted"
+      - name: answer_code
+        description: "Number which identifies the answer given to the related question"
+      - name: answer_label
+        description: "Description of the answer given to the related question"
+      - name: num_answers
+        description: "Actual number of records per possible answer"
+      - name: weighted_num_answers
+        description: "Weighted number of records per possible answer"
+
+  - name: totals_per_question_multichoice
+    description: "Total records per question and country. 
+                  Only the actual number of answers per question is included. The EU, DE and UK aggregates are calculated in this table. 
+                  The table contains only multi_choice questions."
+    columns:
+      - name: survey_id
+        description: "The survey ID"
+      - name: question_id
+        description: "Code which identifies the question"
+      - name: country
+        description: "ISO country code where the interviews were conducted"
+      - name: total_answers
+        description: "Actual number of records per question"
+
+  - name: totals_per_question
+    description: "Contains the total number of answers (actual or weighted, accordingly) per each question in the survey and country."
+    columns:
+      - name: survey_id
+        description: "The survey ID"
+      - name: question_id
+        description: "Code which identifies the question. Only multi_choice questions."
+      - name: country
+        description: "ISO country code (including EU) where the interview was conducted"
+      - name: answer_code
+        description: "Number which identifies the answer given to the related question"
+      - name: answer_label
+        description: "Description of the answer given to the related question"
+      - name: weighted_num_answers
+        description: "Total number of answers per possible answer as needed for the Volume A.
+                      For multi-choice questions it is the actual counting, and for the rest, it is the weighted counting."
+
+  - name: volume_a_data_multichoice
+    description: "Temporary volume A data for multi_choice questions. The metrics are the weighted number of answers and the rounded percentage."
+    columns:
+      - name: survey_id
+        description: "The survey ID"
+      - name: question_id
+        description: "Code which identifies the question. Only multi_choice questions."
+      - name: country
+        description: "ISO country code (including EU) where the interview was conducted"
+      - name: answer_code
+        description: "Number which identifies the answer given to the related question"
+      - name: answer_label
+        description: "Description of the answer given to the related question"
+      - name: weighted_num_answers
+        description: "Total number of answers per possible answer as needed for the Volume A."
+      - name: rounded_pct
+        description: "Rounded (down) percentage of records for each possible answer"
+
+  - name: volume_a_data
+    description: "Table containing the Volume A data in the same format as in the Volume A file.
+                  The aggregates and percentages are calculated by survey, question answer and country.
+                  The metrics are the total weighted responses by possible answer and the rounded percentages."
+    columns:
+      - name: survey_id
+        description: "The survey ID"
+      - name: question_id
+        description: "Code which identifies the question"
+      - name: question_label
+        description: "Text of the actual question as it is in the survey"
+      - name: country
+        description: "ISO country code (including EU) where the interview was conducted"
+      - name: answer_code
+        description: "Number which identifies the answer given to the related question"
+      - name: answer_label
+        description: "Description of the answer given to the related question"
+      - name: weighted_num_answers
+        description: "Total number of answers per possible answer"
+      - name: rounded_pct
+        description: "Rounded (down) percentage of records for each possible answer"
+
+  - name: survey_question_labels
+    description: "Table with question Id and label per survey. This table is used to complete the volume_a_data table with the labels of the questions."
+    columns:
+      - name: survey_id
+        description: "The survey ID"
+      - name: question_id
+        description: "Code which identifies the question"
+      - name: question_label
+        description: "Text of the actual question as it is in the survey"
